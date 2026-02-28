@@ -15,6 +15,7 @@ Regras estritas:
 4. Para dar os preços de Automóvel, você DEVE perguntar SEMPRE ao cliente qual é a cilindragem da sua viatura. Com base na cilindragem que o cliente informar, você DEVE dar o preço EXATO que está na tabela fornecida.
 5. Se o cliente quiser pagar, pergunte se ele quer fazer o pagamento do seguro. Se ele quiser, diga para ele entrar em contacto com o Júlio Valeriano Albano a partir do ícone do WhatsApp (ícone de chamada) no canto inferior direito da tela.
 6. Seja educada, profissional e prestativa.
+7. OBRIGATÓRIO: Assim que o usuário disser o nome dele, ou sempre que você souber o nome do usuário, você DEVE incluir a tag <nome>NomeDoUsuario</nome> no início da sua resposta. Exemplo: <nome>Carlos</nome> Olá Carlos, em que posso ajudar?
 
 Informações dos Produtos (NÃO INVENTE NADA ALÉM DISSO):
 
@@ -84,6 +85,7 @@ export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [userName, setUserName] = useState('Cliente');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -122,10 +124,18 @@ export default function App() {
         }
       });
 
+      let responseText = response.text || 'Desculpe, não consegui processar sua solicitação.';
+
+      const nameMatch = responseText.match(/<nome>(.*?)<\/nome>/i);
+      if (nameMatch && nameMatch[1]) {
+        setUserName(nameMatch[1].trim());
+        responseText = responseText.replace(/<nome>.*?<\/nome>/gi, '').trim();
+      }
+
       const modelMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
-        content: response.text || 'Desculpe, não consegui processar sua solicitação.'
+        content: responseText
       };
 
       setMessages(prev => [...prev, modelMessage]);
@@ -143,9 +153,9 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-stone-50 font-sans">
+    <div className="flex flex-col h-[100dvh] bg-stone-50 font-sans">
       {/* Header */}
-      <header className="bg-white border-b border-stone-200 px-6 py-4 flex items-center justify-between shadow-sm z-10">
+      <header className="bg-white border-b border-stone-200 px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between shadow-sm z-10 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white shadow-sm">
             <Bot size={24} />
@@ -172,13 +182,13 @@ export default function App() {
                   {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                 </div>
                 <div
-                  className={`rounded-2xl px-5 py-3 shadow-sm ${
+                  className={`rounded-2xl px-4 py-3 sm:px-5 sm:py-3 shadow-sm ${
                     msg.role === 'user'
                       ? 'bg-stone-900 text-white rounded-tr-none'
                       : 'bg-white text-stone-800 border border-stone-100 rounded-tl-none'
                   }`}
                 >
-                  <div className="prose prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-stone-100 prose-pre:text-stone-800">
+                  <div className="prose prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-stone-100 prose-pre:text-stone-800 prose-table:block prose-table:overflow-x-auto prose-th:min-w-[120px]">
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                   </div>
                 </div>
@@ -204,7 +214,7 @@ export default function App() {
       </main>
 
       {/* Input Area */}
-      <footer className="bg-white border-t border-stone-200 p-4 relative z-10">
+      <footer className="bg-white border-t border-stone-200 p-3 sm:p-4 relative z-10 shrink-0">
         <div className="max-w-3xl mx-auto">
           <form onSubmit={handleSubmit} className="flex gap-2">
             <input
@@ -212,13 +222,13 @@ export default function App() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Escreva a sua mensagem..."
-              className="flex-1 bg-stone-100 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-xl px-4 py-3 outline-none transition-all"
+              className="flex-1 bg-stone-100 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-xl px-4 py-3 outline-none transition-all text-sm sm:text-base"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="bg-stone-900 hover:bg-stone-800 disabled:bg-stone-300 disabled:cursor-not-allowed text-white rounded-xl px-4 py-3 flex items-center justify-center transition-colors"
+              className="bg-stone-900 hover:bg-stone-800 disabled:bg-stone-300 disabled:cursor-not-allowed text-white rounded-xl px-4 py-3 flex items-center justify-center transition-colors shrink-0"
             >
               <Send size={20} />
             </button>
@@ -228,13 +238,13 @@ export default function App() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/+244948418718?text=Ol%C3%A1%20J%C3%BAlio%2C%20aqui%20%C3%A9%20a%20M%C3%A1bel!%20Este%20cliente%20quer%20fazer%20o%20pagamento%20do%20seguro."
+        href={`https://wa.me/+244948418718?text=${encodeURIComponent(`Olá Júlio, aqui é a Mábel! o Sr(a) ${userName} quer fazer o pagamento do seguro.`)}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-24 right-6 w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 z-50"
+        className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 w-12 h-12 sm:w-14 sm:h-14 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 z-50"
         title="Comprar no WhatsApp"
       >
-        <Phone size={28} />
+        <Phone className="w-6 h-6 sm:w-7 sm:h-7" />
       </a>
     </div>
   );
