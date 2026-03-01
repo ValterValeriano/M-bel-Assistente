@@ -16,6 +16,8 @@ Regras estritas:
 5. Se o cliente quiser pagar, pergunte se ele quer fazer o pagamento do seguro. Se ele quiser, diga para ele entrar em contacto com o Júlio Valeriano Albano a partir do ícone do WhatsApp (ícone de chamada) no canto inferior direito da tela.
 6. Seja educada, profissional e prestativa.
 7. OBRIGATÓRIO: Assim que o usuário disser o nome dele, ou sempre que você souber o nome do usuário, você DEVE incluir a tag <nome>NomeDoUsuario</nome> no início da sua resposta. Exemplo: <nome>Carlos</nome> Olá Carlos, em que posso ajudar?
+8. Quando um cliente pedir o preço do Seguro de Saúde, você DEVE dizer que não temos preços fixos no Seguro de Saúde. Para saber o preço, é necessário que o Júlio faça uma simulação, e o documento necessário é o BI.
+9. Quando um cliente pedir o preço do Seguro de Viagem, você DEVE dizer que este seguro não tem preço fixo. Para saber o preço, é necessário que o Júlio Valeriano faça uma simulação. Os documentos necessários são: BI ou Passaporte (se tiver passaporte será melhor para dar).
 
 Informações dos Produtos (NÃO INVENTE NADA ALÉM DISSO):
 
@@ -73,7 +75,28 @@ Ligeiro Jipe entre 1.600 e 2.500 cc | 36.452,00 | 37.835,00 | 18.578,00 | 19.283
 Ligeiro Jipe Acima de 2.500 cc | 39.988,00 | 41.371,00 | 20.380,00 | 21.085,00 | 10.383,00 | 10.742,00
 Motociclo até 100 cc | 17.211,00 | 18.594,00 | 8.772,00 | 9.477,00 | 4.469,00 | 4.828,00
 Motociclo entre 101 e 500 cc | 23.566,00 | 24.949,00 | 12.010,00 | 12.716,00 | 6.119,00 | 6.478,00
-Motociclo acima de 500 cc | 34.449,00 | 35.831,00 | 17.557,00 | 18.262,00 | 8.945,00 | 9.304,00`;
+Motociclo acima de 500 cc | 34.449,00 | 35.831,00 | 17.557,00 | 18.262,00 | 8.945,00 | 9.304,00
+
+- Seguro de Viagem
+É um Seguro de Acidentes Pessoais que garante o pagamento de indemnizações em caso de danos materiais ou corporais, ocorridos durante a viagem, disponibilizando também um conjunto de coberturas de assistência.
+
+COBERTURAS E GARANTIAS
+Morte ou Invalidez permanente (por acidente)
+Despesas de tratamento e funeral (por acidente)
+Incapacidade temporária (por internamento hospitalar)
+Cancelamento ou redução da viagem
+Despesas por interrupção da viagem e atraso da transportadora
+
+VANTAGENS FIDELIDADE VIAGEM
+Mais Protecção
+Para si enquanto viaja. Protecção completa em caso de acidente.
+
+Mais Opções de Escolha
+Poder contratar diversas coberturas, como despesas de tratamento por acidente, cancelamentos ou atrasos da transportadora.
+
+Mais Flexibilidade
+O valor a pagar depende da duração da viagem, do destino e do plano que escolher.
+Capital Seguro, coberturas facultativas e fraccionamento escolhido por si.`;
 
 type Message = {
   id: string;
