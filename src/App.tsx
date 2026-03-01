@@ -109,6 +109,8 @@ export default function App() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState('Cliente');
+  const [userIntent, setUserIntent] = useState<'simulacao' | 'pagamento' | null>(null);
+  const [insuranceType, setInsuranceType] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -155,6 +157,21 @@ export default function App() {
         responseText = responseText.replace(/<nome>.*?<\/nome>/gi, '').trim();
       }
 
+      const intentMatch = responseText.match(/<intent>(.*?)<\/intent>/i);
+      if (intentMatch && intentMatch[1]) {
+        const intent = intentMatch[1].trim().toLowerCase();
+        if (intent === 'simulacao' || intent === 'pagamento') {
+          setUserIntent(intent as 'simulacao' | 'pagamento');
+        }
+        responseText = responseText.replace(/<intent>.*?<\/intent>/gi, '').trim();
+      }
+
+      const seguroMatch = responseText.match(/<seguro>(.*?)<\/seguro>/i);
+      if (seguroMatch && seguroMatch[1]) {
+        setInsuranceType(seguroMatch[1].trim());
+        responseText = responseText.replace(/<seguro>.*?<\/seguro>/gi, '').trim();
+      }
+
       const modelMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
@@ -173,6 +190,15 @@ export default function App() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getWhatsAppText = () => {
+    if (userIntent === 'simulacao') {
+      return `Olá Júlio, aqui é a Mábel! o Sr(a) ${userName} quer fazer simulação ${insuranceType ? `(${insuranceType})` : ''}`.trim();
+    } else if (userIntent === 'pagamento') {
+      return `Olá Júlio, aqui é a Mábel! o Sr(a) ${userName} quer fazer pagamento do seguro ${insuranceType ? `(${insuranceType})` : ''}`.trim();
+    }
+    return `Olá Júlio, aqui é a Mábel! o Sr(a) ${userName} quer entrar em contacto consigo.`;
   };
 
   return (
@@ -261,7 +287,7 @@ export default function App() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href={`https://wa.me/+244948418718?text=${encodeURIComponent(`Olá Júlio, aqui é a Mábel! o Sr(a) ${userName} quer fazer o pagamento do seguro.`)}`}
+        href={`https://wa.me/+244948418718?text=${encodeURIComponent(getWhatsAppText())}`}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 w-12 h-12 sm:w-14 sm:h-14 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 z-50"
