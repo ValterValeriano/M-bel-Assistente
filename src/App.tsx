@@ -135,6 +135,17 @@ export default function App() {
     setInput('');
     setIsLoading(true);
 
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'undefined') {
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        role: 'model',
+        content: '⚠️ **Erro de Configuração:** A chave da API (GEMINI_API_KEY) não foi encontrada. \n\nSe você hospedou este site no **Vercel**, você precisa adicionar a variável de ambiente `GEMINI_API_KEY` nas configurações do seu projeto e fazer um novo "Deploy".'
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const contents = [...messages, userMessage].map(m => ({
         role: m.role,
@@ -179,12 +190,21 @@ export default function App() {
       };
 
       setMessages(prev => [...prev, modelMessage]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating response:', error);
+      
+      let errorText = 'Desculpe, ocorreu um erro ao tentar me comunicar. Por favor, tente novamente.';
+      
+      if (error?.message?.includes('API key not valid')) {
+        errorText = '⚠️ **Erro:** A chave da API configurada é inválida. Verifique se copiou a chave corretamente.';
+      } else if (error?.message?.includes('quota')) {
+        errorText = '⚠️ **Erro:** Limite de uso da API atingido. Por favor, tente novamente mais tarde.';
+      }
+
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
-        content: 'Desculpe, ocorreu um erro ao tentar me comunicar. Por favor, tente novamente.'
+        content: errorText
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
